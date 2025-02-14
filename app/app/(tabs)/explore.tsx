@@ -8,6 +8,8 @@ import {
   ActivityIndicator,
   SafeAreaView,
   Dimensions,
+  Image,
+  TextInput
 } from 'react-native';
 
 const { width } = Dimensions.get('window');
@@ -51,11 +53,7 @@ const VegetableScreen = () => {
         </View>
 
         <View style={styles.cardContent}>
-          {item.feature && (
-            <View style={styles.featureBadge}>
-              <Text style={styles.featureText}>Featured</Text>
-            </View>
-          )}
+          
           
           <Text style={styles.name}>{item.name}</Text>
           
@@ -72,7 +70,7 @@ const VegetableScreen = () => {
           
           <Text style={styles.unit}>per {item.unit}</Text>
 
-          <View style={styles.stockContainer}>
+          {/* <View style={styles.stockContainer}>
             <View style={[
               styles.stockIndicator,
               { backgroundColor: item.stock_quantity > 10 ? '#4CAF50' : '#FFA000' }
@@ -80,14 +78,14 @@ const VegetableScreen = () => {
             <Text style={styles.stock}>
               {item.stock_quantity} {item.unit} left
             </Text>
-          </View>
+          </View> */}
 
-          <TouchableOpacity 
+          {/* <TouchableOpacity 
             style={styles.addToCartButton}
-            onPress={() => {/* Add to cart logic */}}
+            onPress={() => {}}
           >
             <Text style={styles.addToCartText}>Add to Cart</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </TouchableOpacity>
     );
@@ -112,10 +110,90 @@ const VegetableScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Fresh Vegetables</Text>
-        <Text style={styles.headerSubtitle}>Hand-picked for you</Text>
+        <View
+          style={{
+            flexDirection:'row',
+            alignItems:'center',
+            justifyContent:'space-between',
+            width:'100%',
+          }}
+        >
+        <View>
+        <Text style={[styles.headerTitle,{
+          fontSize:19,
+          fontWeight:'900',
+        }]}>
+        Welcome</Text>
+        <Text style={[styles.headerSubtitle,{
+          fontSize:36,
+          fontWeight:'600',
+        }]}>John Wick.</Text>
+        </View>
+        <View >
+          <Image 
+            source={{uri:"https://placehold.co/600x400/png"}}
+            width={40}
+            height={40}
+            style={{
+              borderRadius:50,
+            }}
+          />
+        </View>
+        </View>
       </View>
-
+      
+            <View>
+              <TextInput
+                placeholder="Search"
+                style={{
+                  backgroundColor:'#f1f3f4',
+                  padding:10,
+                  borderRadius:10,
+                  marginHorizontal:20,
+                  marginVertical:10,
+                  width:'90%',
+                }}
+              />
+            </View>
+            <View>
+              
+                <FlatList
+                  horizontal={true}
+                  showsHorizontalScrollIndicator={false}
+                  data={[1,2,3,4,5,6,7,8,9,10]}
+                  renderItem={()=>{
+                    return(
+                      <View style={{
+                        width:100,
+                        backgroundColor:'white',
+                        borderRadius:20,
+                        marginHorizontal:10,
+                        shadowColor:'#000',
+                        shadowOffset:{
+                          width:0,
+                          height:4,
+                        },
+                        shadowOpacity:0.1,
+                        shadowRadius:8,
+                        elevation:5,
+                        overflow:'hidden',
+                        justifyContent:'center',
+                        alignItems:'center',
+                        }}>
+                        <Text>Item</Text>
+                      </View>
+                    )
+                  }}
+                  contentContainerStyle={{
+                    paddingHorizontal:20,
+                    marginVertical:10,
+                  }}
+                  keyExtractor={item => item}
+                  decelerationRate="fast"
+                  snapToAlignment="center"
+                />
+              
+            </View>
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -134,6 +212,7 @@ const VegetableScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 40,
     backgroundColor: '#f8f9fa',
   },
   header: {
@@ -155,6 +234,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: CARD_WIDTH,
+    height: CARD_WIDTH * 1.4,
     backgroundColor: 'white',
     borderRadius: 20,
     marginHorizontal: 10,
