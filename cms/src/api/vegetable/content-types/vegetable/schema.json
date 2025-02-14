@@ -1,0 +1,62 @@
+{
+  "kind": "collectionType",
+  "collectionName": "vegetables",
+  "info": {
+    "singularName": "vegetable",
+    "pluralName": "vegetables",
+    "displayName": "vegetable",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "minLength": 4,
+      "maxLength": 120
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name"
+    },
+    "description": {
+      "type": "blocks"
+    },
+    "price": {
+      "type": "decimal",
+      "default": 0,
+      "required": true
+    },
+    "unit": {
+      "type": "enumeration",
+      "enum": [
+        "g",
+        "kg",
+        "piece",
+        "bunch"
+      ],
+      "default": "g"
+    },
+    "stock_quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 0
+    },
+    "category": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::category.category"
+    },
+    "discount_price": {
+      "type": "decimal",
+      "default": 0
+    },
+    "feature": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}
