@@ -420,6 +420,7 @@ export interface ApiVegetableVegetable extends Struct.CollectionTypeSchema {
     description: Schema.Attribute.Blocks;
     discount_price: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<0>;
     feature: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    images: Schema.Attribute.Media<'images' | 'files', true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',

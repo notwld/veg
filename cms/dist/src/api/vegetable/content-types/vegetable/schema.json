@@ -57,6 +57,14 @@
         "feature": {
             "type": "boolean",
             "default": false
+        },
+        "images": {
+            "allowedTypes": [
+                "images",
+                "files"
+            ],
+            "type": "media",
+            "multiple": true
         }
     }
 }

@@ -1,109 +1,267 @@
-import { StyleSheet, Image, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+  SafeAreaView,
+  Dimensions,
+} from 'react-native';
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+const { width } = Dimensions.get('window');
+const CARD_WIDTH = width * 0.7;
 
-export default function TabTwoScreen() {
+const VegetableScreen = () => {
+  const [vegetables, setVegetables] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchVegetables();
+  }, []);
+
+  const fetchVegetables = async () => {
+    try {
+      const response = await fetch('http://192.168.0.186:1337/api/vegetables?populate=*');
+      const json = await response.json();
+      setVegetables(json.data);
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      // setError('Failed to fetch vegetables');
+      setLoading(false);
+    }
+  };
+
+  const renderVegetableItem = ({ item }) => {
+    const discountedPrice = item.discount_price > 0 ? item.discount_price : item.price;
+    const hasDiscount = item.discount_price > 0;
+
+    return (
+      <TouchableOpacity 
+        style={styles.card}
+        onPress={() => {/* Navigate to detail screen */}}
+      >
+        <View style={styles.imageContainer}>
+          <View style={styles.imagePlaceholder}>
+            <Text style={styles.imagePlaceholderText}>{item.name.charAt(0).toUpperCase()}</Text>
+          </View>
+        </View>
+
+        <View style={styles.cardContent}>
+          {item.feature && (
+            <View style={styles.featureBadge}>
+              <Text style={styles.featureText}>Featured</Text>
+            </View>
+          )}
+          
+          <Text style={styles.name}>{item.name}</Text>
+          
+          <View style={styles.priceContainer}>
+            {hasDiscount && (
+              <Text style={styles.originalPrice}>
+                ${item.price.toFixed(2)}
+              </Text>
+            )}
+            <Text style={styles.price}>
+              ${discountedPrice.toFixed(2)}
+            </Text>
+          </View>
+          
+          <Text style={styles.unit}>per {item.unit}</Text>
+
+          <View style={styles.stockContainer}>
+            <View style={[
+              styles.stockIndicator,
+              { backgroundColor: item.stock_quantity > 10 ? '#4CAF50' : '#FFA000' }
+            ]} />
+            <Text style={styles.stock}>
+              {item.stock_quantity} {item.unit} left
+            </Text>
+          </View>
+
+          <TouchableOpacity 
+            style={styles.addToCartButton}
+            onPress={() => {/* Add to cart logic */}}
+          >
+            <Text style={styles.addToCartText}>Add to Cart</Text>
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#2E7D32" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.error}>{error}</Text>
+      </View>
+    );
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user's current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Fresh Vegetables</Text>
+        <Text style={styles.headerSubtitle}>Hand-picked for you</Text>
+      </View>
+
+      <FlatList
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        data={vegetables}
+        renderItem={renderVegetableItem}
+        keyExtractor={item => item.documentId}
+        contentContainerStyle={styles.list}
+        snapToInterval={CARD_WIDTH + 20}
+        decelerationRate="fast"
+        snapToAlignment="center"
+      />
+    </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  container: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
   },
-  titleContainer: {
+  header: {
+    padding: 20,
+    paddingBottom: 10,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#1b1b1b',
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: '#666',
+    marginTop: 4,
+  },
+  list: {
+    paddingHorizontal: 10,
+  },
+  card: {
+    width: CARD_WIDTH,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    marginHorizontal: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+    overflow: 'hidden',
+  },
+  imageContainer: {
+    height: CARD_WIDTH * 0.8,
+    backgroundColor: '#f1f3f4',
+  },
+  imagePlaceholder: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#e8f5e9',
+  },
+  imagePlaceholderText: {
+    fontSize: 48,
+    fontWeight: 'bold',
+    color: '#2E7D32',
+  },
+  cardContent: {
+    padding: 16,
+  },
+  featureBadge: {
+    position: 'absolute',
+    top: -30,
+    right: 16,
+    backgroundColor: '#FFD700',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  featureText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  name: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textTransform: 'capitalize',
+    marginBottom: 8,
+    color: '#1b1b1b',
+  },
+  priceContainer: {
     flexDirection: 'row',
-    gap: 8,
+    alignItems: 'baseline',
+    marginBottom: 4,
+  },
+  price: {
+    fontSize: 28,
+    fontWeight: '600',
+    color: '#2E7D32',
+  },
+  originalPrice: {
+    fontSize: 18,
+    textDecorationLine: 'line-through',
+    color: '#999',
+    marginRight: 8,
+  },
+  unit: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 12,
+  },
+  stockContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  stockIndicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 8,
+  },
+  stock: {
+    fontSize: 14,
+    color: '#666',
+  },
+  addToCartButton: {
+    backgroundColor: '#2E7D32',
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  addToCartText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  error: {
+    color: 'red',
+    fontSize: 16,
   },
 });
+
+export default VegetableScreen;
