@@ -1,0 +1,45 @@
+{
+    "kind": "collectionType",
+    "collectionName": "blogs",
+    "info": {
+        "singularName": "blog",
+        "pluralName": "blogs",
+        "displayName": "Blog",
+        "description": ""
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "attributes": {
+        "title": {
+            "type": "string",
+            "required": true
+        },
+        "slug": {
+            "type": "uid",
+            "targetField": "title",
+            "required": true
+        },
+        "image": {
+            "type": "media",
+            "multiple": false,
+            "required": false,
+            "allowedTypes": [
+                "images",
+                "files"
+            ]
+        },
+        "content": {
+            "type": "blocks",
+            "required": true
+        },
+        "brand": {
+            "type": "enumeration",
+            "enum": [
+                "designtech360",
+                "mizetechnologies",
+                "cicada"
+            ]
+        }
+    }
+}
